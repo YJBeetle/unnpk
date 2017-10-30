@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <zlib.h>
 
 int main(int argc, char ** argv)
 {
@@ -48,7 +49,7 @@ int main(int argc, char ** argv)
     uint32_t file_info[7];
     FILE *file_out = NULL;
     char *file_out_name = malloc(strlen(out_path) + 1 + 8 + 1);
-    char *file_raw = 0;
+    uint8_t *file_raw = 0;
 
     printf("Index\tOffset\tSize\tUnknow(maybe check？)\tUnknow\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
