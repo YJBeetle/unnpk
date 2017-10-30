@@ -57,15 +57,22 @@ int main(int argc, char ** argv)
         //map读取文件信息
         fseek(npk, file_offset, SEEK_SET);
         fread(&file_info, 4, 7, npk);
+
+        //控制台输出文件信息
         printf("%x\t%x\t%x\t%x\t%x\n", file_info[0], file_info[1], file_info[2], file_info[4], file_info[6]);
 
+        //读取数据
+        file_raw = malloc(file_info[2]);
+        fseek(npk, file_info[1], SEEK_SET);
+        fread(file_raw, 1, file_info[2], npk);
+
+        //打开并写入数据
         sprintf(file_out_name, "%s/%X", out_path, file_info[0]);
         file_out = fopen(file_out_name, "w+");
-        fseek(npk, file_info[1], SEEK_SET);
-        file_raw = malloc(file_info[2]);
-        fread(file_raw, 1, file_info[2], npk);
         fwrite(file_raw, 1, file_info[2], file_out);
         fclose(file_out);
+
+        //清理
         free(file_raw);
         file_raw = 0;
     }
