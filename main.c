@@ -12,7 +12,7 @@ int main(int argc, char ** argv)
 
     if(argc != 3)
     {
-        printf("unnpk file.npk filename\n");
+        printf("help: unnpk file.npk filename\n");
         exit(1);
     }
 
@@ -23,7 +23,7 @@ int main(int argc, char ** argv)
     FILE *npk = fopen(npk_path, "rb");
     if (npk == NULL)
     {
-        printf("npk file open failed\n");
+        printf("E: npk file open failed\n");
         exit(1);
     }
 
@@ -32,8 +32,8 @@ int main(int argc, char ** argv)
         out_path[strlen(out_path) - 1] = 0;
     if (mkdir(out_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH))
     {
-        printf("mkdir failed\n");
-        exit(1);
+        printf("W: mkdir failed\n");
+        // exit(1);
     }
 
     //读取文件大小
@@ -49,9 +49,11 @@ int main(int argc, char ** argv)
     uint32_t file_info[7];
     FILE *file_out = NULL;
     char *file_out_name = malloc(strlen(out_path) + 1 + 8 + 1);
-    uint8_t *file_raw = 0;
+    uint8_t *file_read_buf = 0;
+    uint8_t *file_out_buf = 0;
+    uLongf file_destLen = 0;
 
-    printf("Index\tOffset\tSize\tUnknow(maybe check？)\tUnknow\n");
+    printf("Index\tOffset\tSize\tUncompress size\tCompressed\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
@@ -59,22 +61,50 @@ int main(int argc, char ** argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("%x\t%x\t%x\t%x\t%x\n", file_info[0], file_info[1], file_info[2], file_info[4], file_info[6]);
+        printf("%x\t%x\t%x\t%x\t%x\n", file_info[0], file_info[1], file_info[2], file_info[3], file_info[6]);
 
         //读取数据
-        file_raw = malloc(file_info[2]);
+        file_read_buf = malloc(file_info[2]);
         fseek(npk, file_info[1], SEEK_SET);
-        fread(file_raw, 1, file_info[2], npk);
+        fread(file_read_buf, 1, file_info[2], npk);
+
+        if(file_info[6])
+        {
+            //解压
+            file_out_buf = malloc(file_info[3]);
+            file_destLen = file_info[3];
+            switch (uncompress(file_out_buf, &file_destLen, file_read_buf, file_info[2]))
+            {
+            case Z_OK:
+                break;
+            case Z_MEM_ERROR:
+                printf("W: Uncompress failed! Z_MEM_ERROR\n");
+                break;
+            case Z_BUF_ERROR:
+                printf("W: Uncompress failed! Z_BUF_ERROR\n");
+                break;
+            case Z_DATA_ERROR:
+                printf("W: Uncompress failed! Z_DATA_ERROR\n");
+                break;
+            }
+        }
+        else
+        {
+            if(file_info[2] != file_info[3])
+            {
+                printf("W: size error!\n");
+            }
+            file_out_buf = file_read_buf;
+            file_read_buf = 0;
+        }
 
         //打开并写入数据
         sprintf(file_out_name, "%s/%X", out_path, file_info[0]);
         file_out = fopen(file_out_name, "w+");
-        fwrite(file_raw, 1, file_info[2], file_out);
+        fwrite(file_out_buf, 1, file_info[3], file_out);
         fclose(file_out);
-
-        //清理
-        free(file_raw);
-        file_raw = 0;
+        free(file_out_buf);
+        file_out_buf = 0;
     }
 
     fclose(npk);
