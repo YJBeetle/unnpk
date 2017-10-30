@@ -33,7 +33,6 @@ int main(int argc, char ** argv)
     if (mkdir(out_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH))
     {
         printf("W: mkdir failed\n");
-        // exit(1);
     }
 
     //读取文件大小
@@ -53,7 +52,7 @@ int main(int argc, char ** argv)
     uint8_t *file_out_buf = 0;
     uLongf file_destLen = 0;
 
-    printf("Index\tOffset\tSize\tUncompress size\tCompressed\n");
+    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t |\n| :=\t\t | :=\t\t | :=\t\t | :=\t\t | :=\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
@@ -61,7 +60,7 @@ int main(int argc, char ** argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("%x\t%x\t%x\t%x\t%x\n", file_info[0], file_info[1], file_info[2], file_info[3], file_info[6]);
+        printf("| %8x\t | %08x\t | %8x\t | %8x\t | %s\t |\n", file_info[0], file_info[1], file_info[2], file_info[3], file_info[6]?"Yes":"No");
 
         //读取数据
         file_read_buf = malloc(file_info[2]);
