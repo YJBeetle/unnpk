@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     uLongf file_destLen = 0;
     char *file_out_type = 0;
 
-    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | MIME Type\t | Type\t\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
+    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | Type\t\t | MIME Type\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
@@ -142,7 +142,6 @@ int main(int argc, char **argv)
         cookie=magic_open(MAGIC_MIME_TYPE);
         magic_load(cookie,NULL);
         file_out_type = (char *)magic_buffer(cookie, file_out_buf, file_info[3]);
-        printf("| %s\t ", file_out_type);
         if (strstr(file_out_type, "image/png"))
         {
             strcat(file_out_name, ".png");
@@ -167,6 +166,7 @@ int main(int argc, char **argv)
         {
             printf("| Unknow\t ");
         }
+        printf("| %s\t ", file_out_type);
         magic_close(cookie);
 
         //打开并写入数据
