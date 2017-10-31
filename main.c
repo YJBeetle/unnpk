@@ -6,11 +6,11 @@
 #include <sys/stat.h>
 #include <zlib.h>
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
     printf("unnpk!\n");
 
-    if(argc != 3)
+    if (argc != 3)
     {
         printf("help: unnpk file.npk filename\n");
         exit(1);
@@ -47,7 +47,12 @@ int main(int argc, char ** argv)
     //准备读取
     uint32_t file_info[7];
     FILE *file_out = NULL;
-    char *file_out_name = malloc(strlen(out_path) + 1 + 8 + 1);
+    char *file_out_name = 0;
+    if (!(file_out_name = malloc(strlen(out_path) + 1 + 8 + 1)))
+    {
+        printf("E: No enough memory!\n");
+        exit(1);
+    }
     uint8_t *file_read_buf = 0;
     uint8_t *file_out_buf = 0;
     uLongf file_destLen = 0;
@@ -60,17 +65,25 @@ int main(int argc, char ** argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("| %8x\t | %08x\t | %8x\t | %8x\t | %s\t |\n", file_info[0], file_info[1], file_info[2], file_info[3], file_info[6]?"Yes":"No");
+        printf("| %8x\t | %08x\t | %8x\t | %8x\t | %s\t |\n", file_info[0], file_info[1], file_info[2], file_info[3], file_info[6] ? "Yes" : "No");
 
         //读取数据
-        file_read_buf = malloc(file_info[2]);
+        if (!(file_read_buf = malloc(file_info[2])))
+        {
+            printf("E: No enough memory!\n");
+            exit(1);
+        }
         fseek(npk, file_info[1], SEEK_SET);
         fread(file_read_buf, 1, file_info[2], npk);
 
-        if(file_info[6])
+        if (file_info[6])
         {
             //解压
-            file_out_buf = malloc(file_info[3]);
+            if (!(file_out_buf = malloc(file_info[3])))
+            {
+                printf("E: No enough memory!\n");
+                exit(1);
+            }
             file_destLen = file_info[3];
             switch (uncompress(file_out_buf, &file_destLen, file_read_buf, file_info[2]))
             {
@@ -86,10 +99,14 @@ int main(int argc, char ** argv)
                 printf("W: Uncompress failed! Z_DATA_ERROR\n");
                 break;
             }
+
+            //clear
+            free(file_read_buf);
+            file_read_buf = 0;
         }
         else
         {
-            if(file_info[2] != file_info[3])
+            if (file_info[2] != file_info[3])
             {
                 printf("W: size error!\n");
             }
@@ -102,11 +119,16 @@ int main(int argc, char ** argv)
         file_out = fopen(file_out_name, "w+");
         fwrite(file_out_buf, 1, file_info[3], file_out);
         fclose(file_out);
+
+        //clear
         free(file_out_buf);
         file_out_buf = 0;
     }
 
+    //clear
     fclose(npk);
+    free(file_out_name);
+    file_out_name = 0;
 
     return 0;
 }
