@@ -141,6 +141,11 @@ int main(int argc, char **argv)
             strcat(file_out_name, ".png");
             printf("| PNG\t\t ");
         }
+        else if (file_out_buf[0] >= 32 && file_out_buf[0] < 127 && file_out_buf[1] >= 32 && file_out_buf[1] < 127 && file_out_buf[2] >= 32 && file_out_buf[2] < 127 && file_out_buf[3] >= 32 && file_out_buf[3] < 127)
+        {
+            strcat(file_out_name, ".txt");
+            printf("| TEXT~\t ");
+        }
         else
         {
             printf("| Unknow\t ");
