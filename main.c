@@ -211,7 +211,7 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".glsl");
                 printf("| GLSL\t\t ");
             }
-            else if (memmem(file_out_buf, file_info[3], "v ", 2) || memmem(file_out_buf, file_info[3], "vt ", 3) || memmem(file_out_buf, file_info[3], "f ", 2))
+            else if (memmem(file_out_buf, file_info[3], "v ", 2) && memmem(file_out_buf, file_info[3], "vt ", 3) && memmem(file_out_buf, file_info[3], "f ", 2))
             {
                 strcat(file_out_name, ".obj");
                 printf("| OBJ\t\t ");
