@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     FILE *npk = fopen(npk_path, "rb");
     if (npk == NULL)
     {
-        printf("\tE: npk file open failed\n");
+        fprintf(stderr, "E: npk file open failed\n");
         exit(1);
     }
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
         out_path[strlen(out_path) - 1] = 0;
     if (mkdir(out_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH))
     {
-        printf("\tW: mkdir failed\n");
+        fprintf(stderr, "W: mkdir failed\n");
     }
 
     //读取文件大小
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     char *file_out_name = 0;
     if (!(file_out_name = malloc(strlen(out_path) + 1 /* / */ + 8 /* 文件名 */ + 5 /* 扩展名 */ + 1 /* 0 */)))
     {
-        printf("\tE: No enough memory!\n");
+        fprintf(stderr, "E: No enough memory!\n");
         exit(1);
     }
     uint8_t *file_read_buf = 0;
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
         //读取数据
         if (!(file_read_buf = malloc(file_info[2])))
         {
-            printf("\tE: No enough memory!\n");
+            fprintf(stderr, "E: No enough memory!\n");
             exit(1);
         }
         fseek(npk, file_info[1], SEEK_SET);
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
             //解压
             if (!(file_out_buf = malloc(file_info[3])))
             {
-                printf("\tE: No enough memory!\n");
+                fprintf(stderr, "E: No enough memory!\n");
                 exit(1);
             }
             file_destLen = file_info[3];
@@ -100,8 +100,8 @@ int main(int argc, char **argv)
                 file_read_buf = 0;
                 break;
             case Z_MEM_ERROR:
-                printf("\tE: Uncompress failed!\n");
-                printf("Z_MEM_ERROR: No enough memory\n");
+                fprintf(stderr, "E: Uncompress failed!\n");
+                fprintf(stderr, "Z_MEM_ERROR: No enough memory\n");
                 exit(1);
                 break;
             case Z_BUF_ERROR:
@@ -109,18 +109,16 @@ int main(int argc, char **argv)
                 file_out_buf = 0;
                 file_out_buf = file_read_buf;
                 file_read_buf = 0;
-                printf("\tW: Uncompress failed!\n");
-                printf("Z_BUF_ERROR: Map is not right, The raw data will be output\n");
-                printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t |\n");
+                fprintf(stderr, "W: Uncompress failed!\n");
+                fprintf(stderr, "Z_BUF_ERROR: Map is not right, The raw data will be output\n");
                 break;
             case Z_DATA_ERROR:
                 free(file_out_buf);
                 file_out_buf = 0;
                 file_out_buf = file_read_buf;
                 file_read_buf = 0;
-                printf("\tW: Uncompress failed!\n");
-                printf("Z_DATA_ERROR: Data is not zlib, The raw data will be output\n");
-                printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t |\n");
+                fprintf(stderr, "W: Uncompress failed!\n");
+                fprintf(stderr, "Z_DATA_ERROR: Data is not zlib, The raw data will be output\n");
                 break;
             }
         }
@@ -128,7 +126,7 @@ int main(int argc, char **argv)
         {
             if (file_info[2] != file_info[3])
             {
-                printf("W: size error!\n");
+                fprintf(stderr, "W: Map size column error!\n");
             }
             file_out_buf = file_read_buf;
             file_read_buf = 0;
