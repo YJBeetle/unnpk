@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     uint8_t *file_out_buf = 0;
     uLongf file_destLen = 0;
 
-    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t |\n");
+    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | Type\t\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("| %8x\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t |\n",
+        printf("| %8x\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t ",
                file_info[0],
                file_info[1],
                (file_info[2] > 1000000) ? (float)file_info[2] / 1000000 : (file_info[2] > 1000) ? (float)file_info[2] / 1000 : (float)file_info[2],
@@ -139,7 +139,14 @@ int main(int argc, char **argv)
 
         //文件头判断类型
         if (memcmp(file_out_buf, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A", 8) == 0)
+        {
             strcat(file_out_name, ".png");
+            printf("| PNG\t\t ");
+        }
+        else
+        {
+            printf("| Unknow\t ");
+        }
 
         //打开并写入数据
         file_out = fopen(file_out_name, "w+");
@@ -149,6 +156,8 @@ int main(int argc, char **argv)
         //clear
         free(file_out_buf);
         file_out_buf = 0;
+
+        printf("|\n");
     }
 
     //clear
