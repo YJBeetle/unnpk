@@ -166,7 +166,7 @@ int main(int argc, char **argv)
         }
         else if (strstr(file_out_type, "text"))
         {
-            if (memmem(file_out_buf, file_info[3], "vec4", 4) || memmem(file_out_buf, file_info[3], "vec2", 4) || memmem(file_out_buf, file_info[3], "tex2D", 5))
+            if (memmem(file_out_buf, file_info[3], "vec4", 4) || memmem(file_out_buf, file_info[3], "vec2", 4) || memmem(file_out_buf, file_info[3], "tex2D", 5) || memmem(file_out_buf, file_info[3], "tex3D", 5))
             {
                 strcat(file_out_name, ".glsl");
                 printf("| GLSL\t\t ");
