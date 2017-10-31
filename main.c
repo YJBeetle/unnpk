@@ -166,7 +166,7 @@ int main(int argc, char **argv)
         }
         else if (strstr(file_out_type, "text"))
         {
-            if (memcmp(file_out_buf, "<NeoX", 5) == 0)
+            if (memcmp(file_out_buf, "<NeoX", 5) == 0 || memcmp(file_out_buf, "<Neox", 5) == 0)
             {
                 strcat(file_out_name, ".NeoX.xml");
                 printf("| NeoX XML\t\t ");
