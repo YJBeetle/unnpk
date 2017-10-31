@@ -164,7 +164,7 @@ int main(int argc, char **argv)
             strcat(file_out_name, ".ktx");
             printf("| KTX\t\t ");
         }
-        else if (memcmp(file_out_buf, "RGIS", 3) == 0)
+        else if (memcmp(file_out_buf, "RGIS", 4) == 0)
         {
             strcat(file_out_name, ".RGIS");
             printf("| RGIS\t\t ");
