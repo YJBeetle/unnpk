@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     uint32_t file_info[7];
     FILE *file_out = NULL;
     char *file_out_name = 0;
-    if (!(file_out_name = malloc(strlen(out_path) + 1 + 8 + 1)))
+    if (!(file_out_name = malloc(strlen(out_path) + 1 /* / */ + 8 /* 文件名 */ + 5 /* 扩展名 */ + 1 /* 0 */)))
     {
         printf("\tE: No enough memory!\n");
         exit(1);
@@ -134,8 +134,14 @@ int main(int argc, char **argv)
             file_read_buf = 0;
         }
 
+        //输出文件名
+        sprintf(file_out_name, "%s/%08X", out_path, file_info[0]);
+
+        //文件头判断类型
+        if (memcmp(file_out_buf, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A", 8) == 0)
+            strcat(file_out_name, ".png");
+
         //打开并写入数据
-        sprintf(file_out_name, "%s/%X", out_path, file_info[0]);
         file_out = fopen(file_out_name, "w+");
         fwrite(file_out_buf, 1, file_info[3], file_out);
         fclose(file_out);
