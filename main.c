@@ -181,6 +181,11 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".FxGroup.xml");
                 printf("| FxGroup XML\t\t ");
             }
+            else if (file_out_buf[0] == '{' && file_out_buf[file_info[3] - 1] == '}')
+            {
+                strcat(file_out_name, ".json");
+                printf("| JSON\t\t ");
+            }
             else
             {
                 strcat(file_out_name, ".txt");
