@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("| %8x\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t ",
+        printf("| %08X\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t ",
                file_info[0],
                file_info[1],
                (file_info[2] > 1000000) ? (float)file_info[2] / 1000000 : (file_info[2] > 1000) ? (float)file_info[2] / 1000 : (float)file_info[2],
