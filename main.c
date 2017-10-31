@@ -164,6 +164,16 @@ int main(int argc, char **argv)
             strcat(file_out_name, ".ktx");
             printf("| KTX\t\t ");
         }
+        else if (memcmp(file_out_buf, "RGIS", 3) == 0)
+        {
+            strcat(file_out_name, ".RGIS");
+            printf("| RGIS\t\t ");
+        }
+        else if (memcmp(file_out_buf, "PKM", 3) == 0)
+        {
+            strcat(file_out_name, ".PKM");
+            printf("| PKM\t\t ");
+        }
         else if (strstr(file_out_type, "text"))
         {
             if (memcmp(file_out_buf, "<NeoX", 5) == 0 || memcmp(file_out_buf, "<Neox", 5) == 0)
