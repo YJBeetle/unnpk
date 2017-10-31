@@ -191,6 +191,11 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".json");
                 printf("| JSON\t\t ");
             }
+            else if (memmem(file_out_buf, file_info[3], "v ", 2) || memmem(file_out_buf, file_info[3], "vt ", 3) || memmem(file_out_buf, file_info[3], "f ", 2))
+            {
+                strcat(file_out_name, ".obj");
+                printf("| OBJ\t\t ");
+            }
             else if (memmem(file_out_buf, file_info[3], "vec4", 4) || memmem(file_out_buf, file_info[3], "vec2", 4) || memmem(file_out_buf, file_info[3], "tex2D", 5) || memmem(file_out_buf, file_info[3], "tex3D", 5))
             {
                 strcat(file_out_name, ".glsl");
