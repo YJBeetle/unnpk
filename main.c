@@ -186,6 +186,11 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".cinematic.xml");
                 printf("| cinematic XML\t\t ");
             }
+            else if (memcmp(file_out_buf, "<EquipList", 10) == 0)
+            {
+                strcat(file_out_name, ".EquipList.xml");
+                printf("| EquipList XML\t\t ");
+            }
             else if (file_out_buf[0] == '{' && file_out_buf[file_info[3] - 1] == '}')
             {
                 strcat(file_out_name, ".json");
