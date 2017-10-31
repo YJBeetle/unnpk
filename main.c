@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     uint32_t file_info[7];
     FILE *file_out = NULL;
     char *file_out_name = 0;
-    if (!(file_out_name = malloc(strlen(out_path) + 1 /* / */ + 8 /* 文件名 */ + 5 /* 扩展名 */ + 1 /* 0 */)))
+    if (!(file_out_name = malloc(strlen(out_path) + 1 /* / */ + 8 /* 文件名 */ + 20 /* 扩展名 */ + 1 /* 0 */)))
     {
         fprintf(stderr, "E: No enough memory!\n");
         exit(1);
