@@ -181,6 +181,11 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".SceneMusic.xml");
                 printf("| SceneMusic XML\t\t ");
             }
+            else if (memcmp(file_out_buf, "<MusicTriggers", 14) == 0)
+            {
+                strcat(file_out_name, ".MusicTriggers.xml");
+                printf("| MusicTriggers XML\t\t ");
+            }
             else if (memcmp(file_out_buf, "<cinematic", 10) == 0)
             {
                 strcat(file_out_name, ".cinematic.xml");
