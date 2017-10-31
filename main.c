@@ -137,11 +137,13 @@ int main(int argc, char **argv)
         //输出文件名
         sprintf(file_out_name, "%s/%08X", out_path, file_info[0]);
 
-        //判断类型
+        //获取MIME类型辅助判断
         magic_t cookie;
         cookie=magic_open(MAGIC_MIME_TYPE);
         magic_load(cookie,NULL);
         file_out_type = (char *)magic_buffer(cookie, file_out_buf, file_info[3]);
+
+        //判断文件类型
         if (strstr(file_out_type, "image/png"))
         {
             strcat(file_out_name, ".png");
@@ -156,6 +158,11 @@ int main(int argc, char **argv)
         {
             strcat(file_out_name, ".xml");
             printf("| XML\t\t ");
+        }
+        else if (memcmp(file_out_buf + 1, "KTX", 3) == 0)
+        {
+            strcat(file_out_name, ".ktx");
+            printf("| KTX\t\t ");
         }
         else if (strstr(file_out_type, "text"))
         {
