@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     uLongf file_destLen = 0;
     char *file_out_type = 0;
 
-    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | Type\t\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t |\n");
+    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | MIME Type\t | Type\t\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
@@ -146,26 +146,26 @@ int main(int argc, char **argv)
         if (strstr(file_out_type, "image/png"))
         {
             strcat(file_out_name, ".png");
-            // printf("| PNG\t\t ");
+            printf("| PNG\t\t ");
         }
         else if (strstr(file_out_type, "image/jpeg"))
         {
             strcat(file_out_name, ".jpg");
-            // printf("| PNG\t\t ");
+            printf("| JPG\t\t ");
         }
         else if (strstr(file_out_type, "xml"))
         {
             strcat(file_out_name, ".xml");
-            // printf("| PNG\t\t ");
+            printf("| XML\t\t ");
         }
         else if (strstr(file_out_type, "text"))
         {
             strcat(file_out_name, ".txt");
-            // printf("| PNG\t\t ");
+            printf("| TXT\t\t ");
         }
         else
         {
-            // printf("| Unknow\t ");
+            printf("| Unknow\t ");
         }
         magic_close(cookie);
 
