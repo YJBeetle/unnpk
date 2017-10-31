@@ -6,10 +6,7 @@
 ```
 git clone https://github.com/YJBeetle/unnpk
 cd unnpk
-mkdir build
-cd build
-cmake ../
-make
+gcc main.c -o unnpk -lz -lmagic
 ```
 
 # run
