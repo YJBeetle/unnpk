@@ -181,6 +181,16 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".FxGroup.xml");
                 printf("| FxGroup XML\t\t ");
             }
+            else if (memcmp(file_out_buf, "<SceneMusic", 11) == 0)
+            {
+                strcat(file_out_name, ".SceneMusic.xml");
+                printf("| SceneMusic XML\t\t ");
+            }
+            else if (memcmp(file_out_buf, "<cinematic", 10) == 0)
+            {
+                strcat(file_out_name, ".cinematic.xml");
+                printf("| cinematic XML\t\t ");
+            }
             else if (file_out_buf[0] == '{' && file_out_buf[file_info[3] - 1] == '}')
             {
                 strcat(file_out_name, ".json");
