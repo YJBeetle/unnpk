@@ -176,6 +176,11 @@ int main(int argc, char **argv)
                 strcat(file_out_name, ".NeoX.xml");
                 printf("| NeoX XML\t\t ");
             }
+            else if (memcmp(file_out_buf, "<FxGroup", 8) == 0)
+            {
+                strcat(file_out_name, ".FxGroup.xml");
+                printf("| FxGroup XML\t\t ");
+            }
             else
             {
                 strcat(file_out_name, ".txt");
