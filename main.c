@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <zlib.h>
+#include <magic.h>
 
 int main(int argc, char **argv)
 {
@@ -56,6 +57,7 @@ int main(int argc, char **argv)
     uint8_t *file_read_buf = 0;
     uint8_t *file_out_buf = 0;
     uLongf file_destLen = 0;
+    char *file_out_type = 0;
 
     printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | Type\t\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
@@ -135,21 +137,37 @@ int main(int argc, char **argv)
         //输出文件名
         sprintf(file_out_name, "%s/%08X", out_path, file_info[0]);
 
-        //文件头判断类型
-        if (memcmp(file_out_buf, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A", 8) == 0)
+        //判断类型
+        magic_t cookie;
+        cookie=magic_open(MAGIC_MIME_TYPE);
+        magic_load(cookie,NULL);
+        file_out_type = (char *)magic_buffer(cookie, file_out_buf, file_info[3]);
+        printf("| %s\t ", file_out_type);
+        if (strstr(file_out_type, "image/png"))
         {
             strcat(file_out_name, ".png");
-            printf("| PNG\t\t ");
+            // printf("| PNG\t\t ");
         }
-        else if (file_out_buf[0] >= 32 && file_out_buf[0] < 127 && file_out_buf[1] >= 32 && file_out_buf[1] < 127 && file_out_buf[2] >= 32 && file_out_buf[2] < 127 && file_out_buf[3] >= 32 && file_out_buf[3] < 127)
+        else if (strstr(file_out_type, "image/jpeg"))
+        {
+            strcat(file_out_name, ".jpg");
+            // printf("| PNG\t\t ");
+        }
+        else if (strstr(file_out_type, "xml"))
+        {
+            strcat(file_out_name, ".xml");
+            // printf("| PNG\t\t ");
+        }
+        else if (strstr(file_out_type, "text"))
         {
             strcat(file_out_name, ".txt");
-            printf("| TEXT~\t ");
+            // printf("| PNG\t\t ");
         }
         else
         {
-            printf("| Unknow\t ");
+            // printf("| Unknow\t ");
         }
+        magic_close(cookie);
 
         //打开并写入数据
         file_out = fopen(file_out_name, "w+");
