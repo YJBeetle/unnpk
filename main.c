@@ -65,7 +65,14 @@ int main(int argc, char **argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("| %8x\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t |\n", file_info[0], file_info[1], (file_info[2]>1000000)?(float)file_info[2]/1000000:(file_info[2]>1000)?(float)file_info[2]/1000:(float)file_info[2], (file_info[2]>1000000)?"MB":(file_info[2]>1000)?"KB":"Byte", (file_info[3]>1000000)?(float)file_info[3]/1000000:(file_info[3]>1000)?(float)file_info[3]/1000:(float)file_info[3], (file_info[3]>1000000)?"MB":(file_info[3]>1000)?"KB":"Byte", file_info[6] ? "Yes" : "No");
+        printf("| %8x\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t |\n",
+               file_info[0],
+               file_info[1],
+               (file_info[2] > 1000000) ? (float)file_info[2] / 1000000 : (file_info[2] > 1000) ? (float)file_info[2] / 1000 : (float)file_info[2],
+               (file_info[2] > 1000000) ? "MB" : (file_info[2] > 1000) ? "KB" : "Byte",
+               (file_info[3] > 1000000) ? (float)file_info[3] / 1000000 : (file_info[3] > 1000) ? (float)file_info[3] / 1000 : (float)file_info[3],
+               (file_info[3] > 1000000) ? "MB" : (file_info[3] > 1000) ? "KB" : "Byte",
+               file_info[6] ? "Yes" : "No");
 
         //读取数据
         if (!(file_read_buf = malloc(file_info[2])))
