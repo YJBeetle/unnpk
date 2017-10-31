@@ -139,8 +139,8 @@ int main(int argc, char **argv)
 
         //获取MIME类型辅助判断
         magic_t cookie;
-        cookie=magic_open(MAGIC_MIME_TYPE);
-        magic_load(cookie,NULL);
+        cookie = magic_open(MAGIC_MIME_TYPE);
+        magic_load(cookie, NULL);
         file_out_type = (char *)magic_buffer(cookie, file_out_buf, file_info[3]);
 
         //判断文件类型
@@ -166,8 +166,16 @@ int main(int argc, char **argv)
         }
         else if (strstr(file_out_type, "text"))
         {
-            strcat(file_out_name, ".txt");
-            printf("| TXT\t\t ");
+            if (memmem(file_out_buf + 1, file_info[3], "vec4", 4) || memmem(file_out_buf + 1, file_info[3], "vec2", 4))
+            {
+                strcat(file_out_name, ".glsl");
+                printf("| GLSL\t\t ");
+            }
+            else
+            {
+                strcat(file_out_name, ".txt");
+                printf("| TXT\t\t ");
+            }
         }
         else
         {
