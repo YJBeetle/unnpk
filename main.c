@@ -149,6 +149,11 @@ int main(int argc, char **argv)
             strcat(file_out_name, ".png");
             printf("| PNG\t\t ");
         }
+        else if (strstr(file_out_type, "image/vnd.adobe.photoshop"))
+        {
+            strcat(file_out_name, ".psd");
+            printf("| PSD\t\t ");
+        }
         else if (strstr(file_out_type, "image/jpeg"))
         {
             strcat(file_out_name, ".jpg");
