@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     //准备读取
     uint32_t file_info[7];
 
-    printf("| Index\t\t | Offset\t | Size (Byte)\t | Unzip size (Byte)\t | Chk\t\t | Unzip Chk\t | Is zip\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
+    printf("| \tIndex\t\t\t | \tOffset\t\t\t | \tSize (Byte)\t\t\t | \tUnzip size (Byte)\t\t\t | \tChk\t\t\t | \tUnzip Chk\t\t\t | \tIs zip\t |\n| \t-\t\t\t | \t-\t\t\t | \t-\t\t\t | \t-\t\t\t | \t-\t\t\t | \t-\t\t\t | \t-\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
