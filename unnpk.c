@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     uint32_t file_info[7];
     FILE *file_out = NULL;
     char *file_out_name = 0;
-    if (!(file_out_name = malloc(strlen(out_path) + 1 /* / */ + 8 /* 文件名 */ + 20 /* 扩展名 */ + 1 /* 0 */)))
+    if (!(file_out_name = malloc(strlen(out_path) + 1 /* / */ + 30 /* 类型文件夹 */ + 1 /* / */ + 8 /* 文件名 */ + 20 /* .扩展名 */ + 1 /* 0 */)))
     {
         fprintf(stderr, "E: No enough memory!\n");
         exit(1);
@@ -57,7 +57,9 @@ int main(int argc, char **argv)
     uint8_t *file_read_buf = 0;
     uint8_t *file_out_buf = 0;
     uLongf file_destLen = 0;
-    char *file_out_type = 0;
+    char *file_out_type = 0;      //存储Mime类型
+    char *file_out_type_p = 0;    //处理Mime类型文件夹用
+    char *file_out_extension = 0; //存储扩展名
 
     printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | Type\t\t | MIME Type\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
@@ -136,120 +138,132 @@ int main(int argc, char **argv)
             file_read_buf = 0;
         }
 
-        //输出文件名
-        sprintf(file_out_name, "%s/%08X", out_path, file_info[0]);
-
         //获取MIME类型辅助判断
         magic_t cookie;
         cookie = magic_open(MAGIC_MIME_TYPE);
         magic_load(cookie, NULL);
         file_out_type = (char *)magic_buffer(cookie, file_out_buf, file_info[3]);
 
-        //判断文件类型
+        //判断文件扩展名
         if (strstr(file_out_type, "image/png"))
         {
-            strcat(file_out_name, ".png");
+            file_out_extension = "png";
             printf("| PNG\t\t ");
         }
         else if (strstr(file_out_type, "image/jpeg"))
         {
-            strcat(file_out_name, ".jpg");
+            file_out_extension = ".jpg";
             printf("| JPG\t\t ");
         }
         else if (strstr(file_out_type, "image/vnd.adobe.photoshop"))
         {
-            strcat(file_out_name, ".psd");
+            file_out_extension = ".psd";
             printf("| PSD\t\t ");
         }
         else if (strstr(file_out_type, "video/mp4"))
         {
-            strcat(file_out_name, ".mp4");
+            file_out_extension = ".mp4";
             printf("| MP4\t\t ");
         }
         else if (strstr(file_out_type, "xml"))
         {
-            strcat(file_out_name, ".xml");
+            file_out_extension = ".xml";
             printf("| XML\t\t ");
         }
         else if (memcmp(file_out_buf + 1, "KTX", 3) == 0)
         {
-            strcat(file_out_name, ".ktx");
+            file_out_extension = ".ktx";
             printf("| KTX\t\t ");
         }
         else if (memcmp(file_out_buf, "RGIS", 4) == 0)
         {
-            strcat(file_out_name, ".RGIS");
+            file_out_extension = ".RGIS";
             printf("| RGIS\t\t ");
         }
         else if (memcmp(file_out_buf, "PKM", 3) == 0)
         {
-            strcat(file_out_name, ".PKM");
+            file_out_extension = ".PKM";
             printf("| PKM\t\t ");
         }
         else if (strstr(file_out_type, "text"))
         {
             if (memcmp(file_out_buf, "<NeoX", 5) == 0 || memcmp(file_out_buf, "<Neox", 5) == 0)
             {
-                strcat(file_out_name, ".NeoX.xml");
+                file_out_extension = ".NeoX.xml";
                 printf("| NeoX XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<FxGroup", 8) == 0)
             {
-                strcat(file_out_name, ".FxGroup.xml");
+                file_out_extension = ".FxGroup.xml";
                 printf("| FxGroup XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<SceneMusic", 11) == 0)
             {
-                strcat(file_out_name, ".SceneMusic.xml");
+                file_out_extension = ".SceneMusic.xml";
                 printf("| SceneMusic XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<MusicTriggers", 14) == 0)
             {
-                strcat(file_out_name, ".MusicTriggers.xml");
+                file_out_extension = ".MusicTriggers.xml";
                 printf("| MusicTriggers XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<cinematic", 10) == 0)
             {
-                strcat(file_out_name, ".cinematic.xml");
+                file_out_extension = ".cinematic.xml";
                 printf("| cinematic XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<EquipList", 10) == 0)
             {
-                strcat(file_out_name, ".EquipList.xml");
+                file_out_extension = ".EquipList.xml";
                 printf("| EquipList XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<SceneConfig", 12) == 0)
             {
-                strcat(file_out_name, ".SceneConfig.xml");
+                file_out_extension = ".SceneConfig.xml";
                 printf("| SceneConfig XML\t\t ");
             }
             else if (file_out_buf[0] == '{' && file_out_buf[file_info[3] - 1] == '}')
             {
-                strcat(file_out_name, ".json");
+                file_out_extension = ".json";
                 printf("| JSON\t\t ");
             }
             else if (memmem(file_out_buf, file_info[3], "vec4", 4) || memmem(file_out_buf, file_info[3], "vec2", 4) || memmem(file_out_buf, file_info[3], "tex2D", 5) || memmem(file_out_buf, file_info[3], "tex3D", 5) || memmem(file_out_buf, file_info[3], "float", 5) || memmem(file_out_buf, file_info[3], "define", 5) || memmem(file_out_buf, file_info[3], "incloud", 5))
             {
-                strcat(file_out_name, ".glsl");
+                file_out_extension = ".glsl";
                 printf("| GLSL\t\t ");
             }
             else if (memmem(file_out_buf, file_info[3], "v ", 2) && memmem(file_out_buf, file_info[3], "vt ", 3) && memmem(file_out_buf, file_info[3], "f ", 2))
             {
-                strcat(file_out_name, ".obj");
+                file_out_extension = ".obj";
                 printf("| OBJ\t\t ");
             }
             else
             {
-                strcat(file_out_name, ".txt");
+                file_out_extension = ".txt";
                 printf("| TXT\t\t ");
             }
         }
         else
         {
+            file_out_extension = "";
             printf("| Unknow\t ");
         }
         printf("| %s\t ", file_out_type);
-        magic_close(cookie);
+
+        //输出文件名
+        sprintf(file_out_name, "%s/%s/%08X%s", out_path, file_out_type, file_info[0], file_out_extension);
+
+        //创建mime分类文件夹
+        file_out_type_p = file_out_type;
+        while ((file_out_type_p = strchr(file_out_type_p, '/') + 1) - 1)
+        {
+            file_out_name[strlen(out_path) + 1 + (file_out_type_p - 1 - file_out_type)] = 0;
+            mkdir(file_out_name, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+            file_out_name[strlen(out_path) + 1 + (file_out_type_p - 1 - file_out_type)] = '/';
+        }
+        file_out_name[strlen(out_path) + 1 + strlen(file_out_type)] = 0;
+        mkdir(file_out_name, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+        file_out_name[strlen(out_path) + 1 + strlen(file_out_type)] = '/';
 
         //打开并写入数据
         file_out = fopen(file_out_name, "w+");
@@ -259,6 +273,7 @@ int main(int argc, char **argv)
         //clear
         free(file_out_buf);
         file_out_buf = 0;
+        magic_close(cookie);
 
         printf("|\n");
     }
