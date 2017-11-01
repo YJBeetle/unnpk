@@ -28,23 +28,23 @@ int main(int argc, char **argv)
     //读取文件大小
     fseek(npk, 0L, SEEK_END);
     uint32_t npk_size = ftell(npk);
-    printf("\tFile size:\t%d\n",npk_size);
+    printf("\tFile size:\t%d Byte\n", npk_size);
 
     //读取map偏移量
     fseek(npk, 0x14, SEEK_SET);
     uint32_t map_offset;
     fread(&map_offset, 4, 1, npk);
     printf("\tMap offset:\t%02X%02X%02X%02X (0x%08X)\n",
-    ((uint8_t *)(&map_offset))[0],
-    ((uint8_t *)(&map_offset))[1],
-    ((uint8_t *)(&map_offset))[2],
-    ((uint8_t *)(&map_offset))[3],
-    map_offset);
+           ((uint8_t *)(&map_offset))[0],
+           ((uint8_t *)(&map_offset))[1],
+           ((uint8_t *)(&map_offset))[2],
+           ((uint8_t *)(&map_offset))[3],
+           map_offset);
 
     //准备读取
     uint32_t file_info[7];
 
-    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | Chk\t\t | Unzip Chk\t | Is zip\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
+    printf("| Index\t\t | Offset\t | Size (Byte)\t | Unzip size (Byte)\t | Chk\t\t | Unzip Chk\t | Is zip\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
