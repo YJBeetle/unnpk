@@ -61,22 +61,12 @@ int main(int argc, char **argv)
     char *file_out_type_p = 0;    //处理Mime类型文件夹用
     char *file_out_extension = 0; //存储扩展名
 
-    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | Type\t\t | MIME Type\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
+    printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | MIME Type\t | Extension\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
     {
         //map读取文件信息
         fseek(npk, file_offset, SEEK_SET);
         fread(&file_info, 4, 7, npk);
-
-        //控制台输出文件信息
-        printf("| %08X\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t ",
-               file_info[0],
-               file_info[1],
-               (file_info[2] > 1000000) ? (float)file_info[2] / 1000000 : (file_info[2] > 1000) ? (float)file_info[2] / 1000 : (float)file_info[2],
-               (file_info[2] > 1000000) ? "MB" : (file_info[2] > 1000) ? "KB" : "Byte",
-               (file_info[3] > 1000000) ? (float)file_info[3] / 1000000 : (file_info[3] > 1000) ? (float)file_info[3] / 1000 : (float)file_info[3],
-               (file_info[3] > 1000000) ? "MB" : (file_info[3] > 1000) ? "KB" : "Byte",
-               file_info[6] ? "Yes" : "No");
 
         //读取数据
         if (!(file_read_buf = malloc(file_info[2])))
@@ -148,107 +138,86 @@ int main(int argc, char **argv)
         if (strstr(file_out_type, "image/png"))
         {
             file_out_extension = "png";
-            printf("| PNG\t\t ");
         }
         else if (strstr(file_out_type, "image/jpeg"))
         {
             file_out_extension = ".jpg";
-            printf("| JPG\t\t ");
         }
         else if (strstr(file_out_type, "image/vnd.adobe.photoshop"))
         {
             file_out_extension = ".psd";
-            printf("| PSD\t\t ");
         }
         else if (strstr(file_out_type, "video/mp4"))
         {
             file_out_extension = ".mp4";
-            printf("| MP4\t\t ");
         }
         else if (strstr(file_out_type, "xml"))
         {
             file_out_extension = ".xml";
-            printf("| XML\t\t ");
         }
         else if (memcmp(file_out_buf + 1, "KTX", 3) == 0)
         {
             file_out_extension = ".ktx";
-            printf("| KTX\t\t ");
         }
         else if (memcmp(file_out_buf, "RGIS", 4) == 0)
         {
             file_out_extension = ".RGIS";
-            printf("| RGIS\t\t ");
         }
         else if (memcmp(file_out_buf, "PKM", 3) == 0)
         {
             file_out_extension = ".PKM";
-            printf("| PKM\t\t ");
         }
         else if (strstr(file_out_type, "text"))
         {
             if (memcmp(file_out_buf, "<NeoX", 5) == 0 || memcmp(file_out_buf, "<Neox", 5) == 0)
             {
                 file_out_extension = ".NeoX.xml";
-                printf("| NeoX XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<FxGroup", 8) == 0)
             {
                 file_out_extension = ".FxGroup.xml";
-                printf("| FxGroup XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<SceneMusic", 11) == 0)
             {
                 file_out_extension = ".SceneMusic.xml";
-                printf("| SceneMusic XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<MusicTriggers", 14) == 0)
             {
                 file_out_extension = ".MusicTriggers.xml";
-                printf("| MusicTriggers XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<cinematic", 10) == 0)
             {
                 file_out_extension = ".cinematic.xml";
-                printf("| cinematic XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<EquipList", 10) == 0)
             {
                 file_out_extension = ".EquipList.xml";
-                printf("| EquipList XML\t\t ");
             }
             else if (memcmp(file_out_buf, "<SceneConfig", 12) == 0)
             {
                 file_out_extension = ".SceneConfig.xml";
-                printf("| SceneConfig XML\t\t ");
             }
             else if (file_out_buf[0] == '{' && file_out_buf[file_info[3] - 1] == '}')
             {
                 file_out_extension = ".json";
-                printf("| JSON\t\t ");
             }
             else if (memmem(file_out_buf, file_info[3], "vec4", 4) || memmem(file_out_buf, file_info[3], "vec2", 4) || memmem(file_out_buf, file_info[3], "tex2D", 5) || memmem(file_out_buf, file_info[3], "tex3D", 5) || memmem(file_out_buf, file_info[3], "float", 5) || memmem(file_out_buf, file_info[3], "define", 5) || memmem(file_out_buf, file_info[3], "incloud", 5))
             {
                 file_out_extension = ".glsl";
-                printf("| GLSL\t\t ");
             }
             else if (memmem(file_out_buf, file_info[3], "v ", 2) && memmem(file_out_buf, file_info[3], "vt ", 3) && memmem(file_out_buf, file_info[3], "f ", 2))
             {
                 file_out_extension = ".obj";
-                printf("| OBJ\t\t ");
             }
             else
             {
                 file_out_extension = ".txt";
-                printf("| TXT\t\t ");
             }
         }
         else
         {
             file_out_extension = "";
-            printf("| Unknow\t ");
         }
-        printf("| %s\t ", file_out_type);
 
         //输出文件名
         sprintf(file_out_name, "%s/%s/%08X%s", out_path, file_out_type, file_info[0], file_out_extension);
@@ -270,12 +239,22 @@ int main(int argc, char **argv)
         fwrite(file_out_buf, 1, file_info[3], file_out);
         fclose(file_out);
 
+        //控制台输出文件信息
+        printf("| %08X\t | 0x%08X\t | %.3g %s\t | %.3g %s\t | %s\t | %s\t | %s\t |\n",
+        file_info[0],
+        file_info[1],
+        (file_info[2] > 1000000) ? (float)file_info[2] / 1000000 : (file_info[2] > 1000) ? (float)file_info[2] / 1000 : (float)file_info[2],
+        (file_info[2] > 1000000) ? "MB" : (file_info[2] > 1000) ? "KB" : "Byte",
+        (file_info[3] > 1000000) ? (float)file_info[3] / 1000000 : (file_info[3] > 1000) ? (float)file_info[3] / 1000 : (float)file_info[3],
+        (file_info[3] > 1000000) ? "MB" : (file_info[3] > 1000) ? "KB" : "Byte",
+        file_info[6] ? "Yes" : "No",
+        file_out_type,
+        strlen(file_out_extension)?file_out_extension:"None");
+
         //clear
         free(file_out_buf);
         file_out_buf = 0;
         magic_close(cookie);
-
-        printf("|\n");
     }
 
     //clear
