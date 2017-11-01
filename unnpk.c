@@ -151,6 +151,10 @@ int main(int argc, char **argv)
         {
             file_out_extension = ".mp4";
         }
+        else if (strstr(file_out_type, "application/font-sfnt"))
+        {
+            file_out_extension = ".ttf";
+        }
         else if (strstr(file_out_type, "xml"))
         {
             file_out_extension = ".xml";
