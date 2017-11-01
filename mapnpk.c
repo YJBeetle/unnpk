@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv)
 {
-    printf("#mapnpk!\n");
+    printf("# mapnpk!\n");
 
     if (argc != 2)
     {
@@ -28,11 +28,18 @@ int main(int argc, char **argv)
     //读取文件大小
     fseek(npk, 0L, SEEK_END);
     uint32_t npk_size = ftell(npk);
+    printf("\tFile size:\t%d\n",npk_size);
 
     //读取map偏移量
     fseek(npk, 0x14, SEEK_SET);
     uint32_t map_offset;
     fread(&map_offset, 4, 1, npk);
+    printf("\tMap offset:\t%02X%02X%02X%02X (0x%08X)\n",
+    ((uint8_t *)(&map_offset))[0],
+    ((uint8_t *)(&map_offset))[1],
+    ((uint8_t *)(&map_offset))[2],
+    ((uint8_t *)(&map_offset))[3],
+    map_offset);
 
     //准备读取
     uint32_t file_info[7];
