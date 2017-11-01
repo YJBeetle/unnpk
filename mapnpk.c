@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         fread(&file_info, 4, 7, npk);
 
         //控制台输出文件信息
-        printf("| 0x%08X\t | 0x%08X\t | %d\t | %d\t | %02X%02X%02X%02X(0x%08X)\t | %02X%02X%02X%02X(0x%08X)\t | %s\t |\n",
+        printf("| 0x%08X\t | 0x%08X\t | %d\t | %d\t | %02X%02X%02X%02X (0x%08X)\t | %02X%02X%02X%02X (0x%08X)\t | %s\t |\n",
                file_info[0],
                file_info[1],
                file_info[2],
