@@ -6,7 +6,7 @@
 ```
 git clone https://github.com/YJBeetle/unnpk
 cd unnpk
-gcc main.c -o unnpk -lz -lmagic
+make
 ```
 
 # run
