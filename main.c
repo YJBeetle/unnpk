@@ -149,15 +149,20 @@ int main(int argc, char **argv)
             strcat(file_out_name, ".png");
             printf("| PNG\t\t ");
         }
+        else if (strstr(file_out_type, "image/jpeg"))
+        {
+            strcat(file_out_name, ".jpg");
+            printf("| JPG\t\t ");
+        }
         else if (strstr(file_out_type, "image/vnd.adobe.photoshop"))
         {
             strcat(file_out_name, ".psd");
             printf("| PSD\t\t ");
         }
-        else if (strstr(file_out_type, "image/jpeg"))
+        else if (strstr(file_out_type, "video/mp4"))
         {
-            strcat(file_out_name, ".jpg");
-            printf("| JPG\t\t ");
+            strcat(file_out_name, ".mp4");
+            printf("| MP4\t\t ");
         }
         else if (strstr(file_out_type, "xml"))
         {
