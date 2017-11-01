@@ -209,6 +209,10 @@ int main(int argc, char **argv)
             {
                 file_out_extension = ".SceneConfig.xml";
             }
+            else if (memcmp(file_out_buf, "<SceneRoad", 12) == 0)
+            {
+                file_out_extension = ".SceneRoad.xml";
+            }
             else if (file_out_buf[0] == '{' && file_out_buf[file_info[3] - 1] == '}')
             {
                 file_out_extension = ".json";
