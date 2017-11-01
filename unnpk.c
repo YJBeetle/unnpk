@@ -111,6 +111,7 @@ int main(int argc, char **argv)
                 file_out_buf = 0;
                 file_out_buf = file_read_buf;
                 file_read_buf = 0;
+                file_info[3] = file_info[2];
                 fprintf(stderr, "W: Uncompress failed!\n");
                 fprintf(stderr, "Z_BUF_ERROR: Map is not right, The raw data will be output\n");
                 break;
@@ -119,6 +120,7 @@ int main(int argc, char **argv)
                 file_out_buf = 0;
                 file_out_buf = file_read_buf;
                 file_read_buf = 0;
+                file_info[3] = file_info[2];
                 fprintf(stderr, "W: Uncompress failed!\n");
                 fprintf(stderr, "Z_DATA_ERROR: Data is not zlib, The raw data will be output\n");
                 break;
