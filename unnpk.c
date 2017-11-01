@@ -137,7 +137,7 @@ int main(int argc, char **argv)
         //判断文件扩展名
         if (strstr(file_out_type, "image/png"))
         {
-            file_out_extension = "png";
+            file_out_extension = ".png";
         }
         else if (strstr(file_out_type, "image/jpeg"))
         {
