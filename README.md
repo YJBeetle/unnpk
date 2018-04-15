@@ -8,6 +8,11 @@ git clone https://github.com/YJBeetle/unnpk
 cd unnpk
 make
 ```
+## CentOS
+
+```
+sudo yum install file-libs file-devel
+```
 
 # run
 
