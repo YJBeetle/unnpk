@@ -45,7 +45,7 @@ void args_usage (const char *argv0)
 
 void args_parse(int argc, char *argv[], argsdata * data)
 {
-    static const char args_optstring[] = "i:o:f:t";
+    static const char args_optstring[] = "i:o:f:t:";
     static struct option args_options[] =
     {
         /* name,		has_arg,	flag,	val */
