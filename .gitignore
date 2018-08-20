@@ -66,12 +66,13 @@ Thumbs.db
 *.pyc
 
 # Binaries
-# --------
 *.dll
 *.exe
-
 /unnpk
 /mapnpk
 
 #uncompyle2
 /uncompyle2
+
+# npk file
+*.npk
