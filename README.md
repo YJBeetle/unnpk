@@ -50,7 +50,6 @@ python setup.py install
 
 ```
 ./unnpk script.npk script
-
 ```
 
 取出一个解开后的文件，比如这里将会使用 0A0D60DC 这个文件作为案例
@@ -59,7 +58,6 @@ python setup.py install
 
 ```
 ./tools/script_redirect.py 0A0D60DC > 0A0D60DC.out
-
 ```
 
 纠正 opcode
