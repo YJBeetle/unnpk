@@ -76,3 +76,6 @@ Thumbs.db
 
 # npk file
 *.npk
+
+#python
+*.pyc
