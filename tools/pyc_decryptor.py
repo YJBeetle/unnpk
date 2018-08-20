@@ -1,13 +1,13 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import os  
-import zlib  
-import rotor  
-import marshal  
-import binascii  
-import argparse  
-import pymarshal  
-class PYCEncryptor(object):  
+import os
+import zlib
+import rotor
+import marshal
+import binascii
+import argparse
+import pymarshal
+class PYCEncryptor(object):
     def __init__(self):
         self.opcode_encrypt_map = {
             1: 38, 2: 46, 3: 37, 4: 66, 5: 12, 10: 35, 11: 67, 12: 81, 13: 32, 15: 9, 19: 63, 20: 70,
@@ -45,12 +45,12 @@ class PYCEncryptor(object):
             output_file = os.path.basename(pyc_filename) + '.pyc'
         with open(output_file, 'wb') as fd:
             fd.write(self.pyc27_header + pyc_content)
-def main():  
+def main():
     parser = argparse.ArgumentParser(description='onmyoji py decrypt tool')
     parser.add_argument("INPUT_NAME", help='input file')
     parser.add_argument("OUTPUT_NAME", help='output file')
     args = parser.parse_args()
     encryptor = PYCEncryptor()
     encryptor.decrypt_file(args.INPUT_NAME, args.OUTPUT_NAME)
-if __name__ == '__main__':  
+if __name__ == '__main__':
     main()
