@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     if (argc != 3)
     {
         printf("\tHelp: unnpk npk_file unnpk_direcory\n");
-        exit(1);
+        return 0;
     }
 
     char *npk_path = argv[1];
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     if (npk == NULL)
     {
         fprintf(stderr, "E: npk file open failed\n");
-        exit(1);
+        return 1;
     }
 
     //输出文件夹
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     //读取文件大小
     fseek(npk, 0L, SEEK_END);
-    uint32_t npk_size = ftell(npk);
+    size_t npk_size = ftell(npk);
 
     //读取map偏移量
     fseek(npk, 0x14, SEEK_SET);
@@ -54,12 +54,12 @@ int main(int argc, char **argv)
         fprintf(stderr, "E: No enough memory!\n");
         exit(1);
     }
-    uint8_t *file_read_buf = 0;
-    uint8_t *file_out_buf = 0;
+    char *file_read_buf = NULL;
+    char *file_out_buf = NULL;
     uLongf file_destLen = 0;
-    char *file_out_type = 0;      //存储Mime类型
-    char *file_out_type_p = 0;    //处理Mime类型文件夹用
-    char *file_out_extension = 0; //存储扩展名
+    char *file_out_type = NULL;      //存储Mime类型
+    char *file_out_type_p = NULL;    //处理Mime类型文件夹用
+    char *file_out_extension = NULL; //存储扩展名
 
     printf("| Index\t\t | Offset\t | Size\t\t | Unzip size\t | zip\t | MIME Type\t | Extension\t |\n| -\t\t | -\t\t | -\t\t | -\t\t | -\t | -\t\t | -\t\t |\n");
     for (int file_offset = map_offset; file_offset < npk_size; file_offset += 7 * 4)
@@ -77,7 +77,8 @@ int main(int argc, char **argv)
         fseek(npk, file_info[1], SEEK_SET);
         fread(file_read_buf, 1, file_info[2], npk);
 
-        if (file_info[6])
+        // file_info[2] 和 file_info[3] 大小不匹配说明数据压缩了
+        if (file_info[6] || file_info[2] != file_info[3])
         {
             //解压
             if (!(file_out_buf = malloc(file_info[3])))
@@ -86,7 +87,7 @@ int main(int argc, char **argv)
                 exit(1);
             }
             file_destLen = file_info[3];
-            switch (uncompress(file_out_buf, &file_destLen, file_read_buf, file_info[2]))
+            switch (uncompress((uint8_t*)file_out_buf, &file_destLen, (uint8_t*)file_read_buf, file_info[2]))
             {
             case Z_OK:
                 //clear
@@ -120,10 +121,6 @@ int main(int argc, char **argv)
         }
         else
         {
-            if (file_info[2] != file_info[3])
-            {
-                fprintf(stderr, "W: Map size column error!\n");
-            }
             file_out_buf = file_read_buf;
             file_read_buf = 0;
         }
@@ -167,49 +164,49 @@ int main(int argc, char **argv)
         {
             file_out_extension = ".xml";
         }
-        else if (memcmp(file_out_buf + 1, "KTX", 3) == 0)
+        else if (strcmp(file_out_buf + 1, "KTX") == 0)
         {
             file_out_extension = ".ktx";
         }
-        else if (memcmp(file_out_buf, "RGIS", 4) == 0)
+        else if (strcmp(file_out_buf, "RGIS") == 0)
         {
             file_out_extension = ".RGIS";
         }
-        else if (memcmp(file_out_buf, "PKM", 3) == 0)
+        else if (strcmp(file_out_buf, "PKM") == 0)
         {
             file_out_extension = ".PKM";
         }
         else if (strstr(file_out_type, "text"))
         {
-            if (memcmp(file_out_buf, "<NeoX", 5) == 0 || memcmp(file_out_buf, "<Neox", 5) == 0)
+            if (strcmp(file_out_buf, "<NeoX") == 0 || strcmp(file_out_buf, "<Neox") == 0)
             {
                 file_out_extension = ".NeoX.xml";
             }
-            else if (memcmp(file_out_buf, "<FxGroup", 8) == 0)
+            else if (strcmp(file_out_buf, "<FxGroup") == 0)
             {
                 file_out_extension = ".FxGroup.xml";
             }
-            else if (memcmp(file_out_buf, "<SceneMusic", 11) == 0)
+            else if (strcmp(file_out_buf, "<SceneMusic") == 0)
             {
                 file_out_extension = ".SceneMusic.xml";
             }
-            else if (memcmp(file_out_buf, "<MusicTriggers", 14) == 0)
+            else if (strcmp(file_out_buf, "<MusicTriggers") == 0)
             {
                 file_out_extension = ".MusicTriggers.xml";
             }
-            else if (memcmp(file_out_buf, "<cinematic", 10) == 0)
+            else if (strcmp(file_out_buf, "<cinematic") == 0)
             {
                 file_out_extension = ".cinematic.xml";
             }
-            else if (memcmp(file_out_buf, "<EquipList", 10) == 0)
+            else if (strcmp(file_out_buf, "<EquipList") == 0)
             {
                 file_out_extension = ".EquipList.xml";
             }
-            else if (memcmp(file_out_buf, "<SceneConfig", 12) == 0)
+            else if (strcmp(file_out_buf, "<SceneConfig") == 0)
             {
                 file_out_extension = ".SceneConfig.xml";
             }
-            else if (memcmp(file_out_buf, "<SceneRoad", 12) == 0)
+            else if (strcmp(file_out_buf, "<SceneRoad") == 0)
             {
                 file_out_extension = ".SceneRoad.xml";
             }
@@ -240,13 +237,14 @@ int main(int argc, char **argv)
 
         //创建mime分类文件夹
         file_out_type_p = file_out_type;
-        while ((file_out_type_p = strchr(file_out_type_p, '/') + 1) - 1)
+        while ((file_out_type_p = strchr(file_out_type_p, '/')) != NULL)
         {
-            file_out_name[strlen(out_path) + 1 + (file_out_type_p - 1 - file_out_type)] = 0;
+            file_out_type_p ++;
+            file_out_name[strlen(out_path) + (file_out_type_p - file_out_type)] = '\0';
             mkdir(file_out_name, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
             file_out_name[strlen(out_path) + 1 + (file_out_type_p - 1 - file_out_type)] = '/';
         }
-        file_out_name[strlen(out_path) + 1 + strlen(file_out_type)] = 0;
+        file_out_name[strlen(out_path) + 1 + strlen(file_out_type)] = '\0';
         mkdir(file_out_name, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         file_out_name[strlen(out_path) + 1 + strlen(file_out_type)] = '/';
 
