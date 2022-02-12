@@ -72,7 +72,7 @@ python setup.py install
 ./tools/script_redirect.py 0A0D60DC > 0A0D60DC.out
 ```
 
-纠正 opcode（这里的pyc_decryptor.py感谢fate0的文章： <http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/> ）
+纠正 opcode（这里的pyc_decryptor.py感谢fate0的文章： [~~fate0的博客（已删除）~~](http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/) | [备份1](https://f002.backblazeb2.com/file/sec-news-backup/files/writeup/blog.fatezero.org/_2017_01_14_decrypt_onmyoji_/index.html) | [备份2](https://archive.is/oUloC)）
 
 ```
 ./tools/pyc_decryptor.py 0A0D60DC.out 0A0D60DC.pyc
